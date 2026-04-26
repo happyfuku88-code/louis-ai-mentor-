@@ -116,13 +116,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 exportText += `${msg.parts[0].text}\n\n`;
             });
 
+            const filename = `LOUIS_AI_${session.title}.txt`;
             const blob = new Blob([exportText], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `LOUIS_AI_${session.title}.txt`;
-            a.click();
-            URL.revokeObjectURL(url);
+
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+            if (isMobile && navigator.share) {
+                const file = new File([blob], filename, { type: 'text/plain' });
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    navigator.share({
+                        files: [file],
+                        title: filename
+                    }).catch(e => console.log(e));
+                } else {
+                    navigator.share({
+                        title: filename,
+                        text: exportText
+                    }).catch(e => console.log(e));
+                }
+            } else {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 100);
+            }
         };
     }
 
