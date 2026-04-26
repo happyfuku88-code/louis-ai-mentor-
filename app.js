@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Modal elements
     const settingsModal = document.getElementById('settings-modal');
+    const exportBtn = document.getElementById('export-btn');
     const settingsBtn = document.getElementById('settings-btn');
     const closeBtn = document.querySelector('.close-btn');
     const apiKeyInput = document.getElementById('api-key-input');
@@ -51,6 +52,35 @@ document.addEventListener('DOMContentLoaded', () => {
     newChatBtn.onclick = () => {
         createNewSession();
         if(window.innerWidth <= 768) sidebar.classList.remove('open');
+    }
+
+    if (exportBtn) {
+        exportBtn.onclick = () => {
+            const session = chatSessions.find(s => s.id === currentSessionId);
+            if (!session || session.messages.length === 0) {
+                alert("保存するチャット履歴がありません。");
+                return;
+            }
+
+            let exportText = `LOUIS AI 魂の羅針盤 - チャット記録\n`;
+            exportText += `日時: ${new Date(session.updatedAt).toLocaleString('ja-JP')}\n`;
+            exportText += `テーマ: ${session.title}\n`;
+            exportText += `----------------------------------------\n\n`;
+
+            session.messages.forEach(msg => {
+                const role = msg.role === 'user' ? 'あなた' : 'LOUIS AI';
+                exportText += `[${role}]\n`;
+                exportText += `${msg.parts[0].text}\n\n`;
+            });
+
+            const blob = new Blob([exportText], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `LOUIS_AI_${session.title}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        };
     }
 
     // Modal Logic
