@@ -158,7 +158,21 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const dateStr = new Date(session.updatedAt).toLocaleDateString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
             
-            item.innerHTML = `<span class="history-item-date">${dateStr}</span>${session.title}`;
+            item.innerHTML = `
+                <div class="history-item-content">
+                    <span class="history-item-date">${dateStr}</span>
+                    <span class="history-item-title">${session.title}</span>
+                </div>
+                <button class="delete-chat-btn" title="削除"><i class="fa-solid fa-trash"></i></button>
+            `;
+            
+            const deleteBtn = item.querySelector('.delete-chat-btn');
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                if (confirm("このチャット履歴を削除しますか？")) {
+                    deleteSession(session.id);
+                }
+            };
             
             item.onclick = () => {
                 loadSession(session.id);
@@ -167,6 +181,16 @@ document.addEventListener('DOMContentLoaded', () => {
             
             chatHistoryList.appendChild(item);
         });
+    }
+
+    function deleteSession(id) {
+        chatSessions = chatSessions.filter(s => s.id !== id);
+        saveSessions();
+        if (currentSessionId === id) {
+            initApp();
+        } else {
+            renderSidebar();
+        }
     }
 
     function clearChatUI() {

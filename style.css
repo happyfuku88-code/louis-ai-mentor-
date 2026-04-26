@@ -106,11 +106,38 @@ body {
     border-radius: 8px;
     cursor: pointer;
     font-size: 0.9rem;
+    transition: background 0.2s;
+    border: 1px solid transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.history-item-content {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    transition: background 0.2s;
-    border: 1px solid transparent;
+    flex-grow: 1;
+}
+
+.delete-chat-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px 8px;
+    opacity: 0.5; /* Mobile support */
+    transition: opacity 0.2s, color 0.2s;
+    flex-shrink: 0;
+}
+
+.history-item:hover .delete-chat-btn {
+    opacity: 1;
+}
+
+.delete-chat-btn:hover {
+    color: #ff4d4d;
 }
 
 .history-item:hover {
