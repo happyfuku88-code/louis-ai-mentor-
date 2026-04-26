@@ -439,6 +439,28 @@ textarea::placeholder {
     text-decoration: underline;
 }
 
+/* Affirmation Modal Specifics */
+.affirmation-content {
+    background: linear-gradient(135deg, rgba(142, 45, 226, 0.2), rgba(74, 0, 224, 0.2));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(142, 45, 226, 0.3);
+}
+
+.affirmation-title {
+    color: #d8b4fe;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+
+.affirmation-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+    margin-bottom: 30px;
+    font-weight: 300;
+}
+
 /* Loading Dot Animation */
 .typing-indicator {
     display: flex;

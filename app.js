@@ -19,6 +19,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveKeyBtn = document.getElementById('save-key-btn');
     const clearHistoryBtn = document.getElementById('clear-history-btn');
 
+    // Affirmation elements
+    const affirmationModal = document.getElementById('affirmation-modal');
+    const affirmationText = document.getElementById('affirmation-text');
+    const closeAffirmationBtn = document.getElementById('close-affirmation-btn');
+
+    const affirmations = [
+        "すべては完璧なプロセスの中にあります。今の感情をただ感じてみましょう。",
+        "あなたはソースエネルギーと常につながっています。リラックスして、その流れを信じてください。",
+        "ネガティブな感情は「望む方向」を教えてくれる羅針盤です。気づかせてくれたことに感謝しましょう。",
+        "焦る必要はありません。宇宙はあなたにとって一番良いタイミングを知っています。",
+        "「今、心地よいこと」を選ぶのが、最も早く目的地に着く方法です。",
+        "あなたが経験している現実は、あなたの内なる波動の反射にすぎません。内側を整えましょう。",
+        "抵抗を手放し、ただ「受け取る許可」を出してください。",
+        "あなたの価値は、何かを達成することではなく、ただ「存在する」ことそのものにあります。",
+        "問題にフォーカスするのではなく、その問題が解決したあとの「ホッとした感覚」に意識を向けましょう。",
+        "どんな時も、あなたの感情のナビゲーションシステムを最優先にしてください。",
+        "コントラスト（嫌なこと）を経験した瞬間、宇宙にはすでに「あなたの望み」が打ち上げられています。",
+        "今この瞬間、少しでも気分が良くなる思考を選びましょう。",
+        "無理に行動を起こす前に、まずは波動を整える（ソースと調和する）時間を持ちましょう。",
+        "あなたには、自分の現実を望み通りに創造する力が完全に備わっています。",
+        "すべてはうまくいっています。大きく深呼吸をして、この瞬間を味わってください。"
+    ];
+
     let apiKey = localStorage.getItem('louis_ai_api_key') || '';
     
     // LOUIS AI System Instruction
@@ -43,6 +66,26 @@ document.addEventListener('DOMContentLoaded', () => {
             loadSession(chatSessions[0].id);
         }
         renderSidebar();
+        checkAndShowAffirmation();
+    }
+
+    function checkAndShowAffirmation() {
+        if (!affirmationModal) return;
+        const lastDate = localStorage.getItem('louis_ai_last_affirmation_date');
+        const today = new Date().toLocaleDateString();
+
+        if (lastDate !== today) {
+            const randomQuote = affirmations[Math.floor(Math.random() * affirmations.length)];
+            affirmationText.textContent = randomQuote;
+            affirmationModal.style.display = "flex";
+            localStorage.setItem('louis_ai_last_affirmation_date', today);
+        }
+    }
+
+    if (closeAffirmationBtn) {
+        closeAffirmationBtn.onclick = () => {
+            affirmationModal.style.display = "none";
+        };
     }
 
     // Sidebar toggles
