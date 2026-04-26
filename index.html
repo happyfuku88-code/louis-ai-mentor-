@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOUIS AI - 魂の羅針盤</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 宇宙の背景エフェクト -->
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+
+    <div class="layout-container">
+        <!-- サイドバー -->
+        <aside class="sidebar glass-panel" id="sidebar">
+            <div class="sidebar-header">
+                <button id="new-chat-btn" class="primary-btn"><i class="fa-solid fa-plus"></i> 新しいチャット</button>
+                <button id="close-sidebar-btn" class="icon-btn mobile-only"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="chat-history-list" id="chat-history-list">
+                <!-- 履歴アイテムがここに追加されます -->
+            </div>
+        </aside>
+
+        <!-- メインアプリエリア -->
+        <div class="app-container">
+            <!-- ヘッダー -->
+            <header class="glass-panel">
+                <div class="header-info">
+                    <button id="sidebar-toggle-btn" class="icon-btn mobile-toggle"><i class="fa-solid fa-bars"></i></button>
+                    <div class="avatar"><i class="fa-solid fa-compass"></i></div>
+                    <div>
+                        <h1>LOUIS AI</h1>
+                        <p>あなたの魂の羅針盤</p>
+                    </div>
+                </div>
+                <button id="settings-btn" class="icon-btn"><i class="fa-solid fa-gear"></i></button>
+            </header>
+
+            <!-- チャットエリア -->
+            <main class="chat-container glass-panel" id="chat-container">
+                <!-- メッセージはJSで動的に生成されます -->
+            </main>
+
+            <!-- 入力エリア -->
+            <footer class="glass-panel">
+                <div class="input-wrapper">
+                    <textarea id="user-input" placeholder="メッセージを入力してください..." rows="1"></textarea>
+                    <button id="send-btn" class="icon-btn send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- 設定モーダル（APIキー入力用） -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content glass-panel">
+            <span class="close-btn">&times;</span>
+            <h2>設定</h2>
+            <p>Gemini APIキーを入力して、LOUIS AIを起動してください。</p>
+            <input type="password" id="api-key-input" placeholder="AIzaSy...">
+            <button id="save-key-btn" class="primary-btn">保存</button>
+            <button id="clear-history-btn" class="secondary-btn" style="margin-top:12px;">すべての履歴を消去</button>
+            <p class="help-text"><a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Gemini APIキーを無料で取得する</a></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
