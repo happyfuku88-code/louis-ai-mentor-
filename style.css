@@ -21,6 +21,7 @@ body {
     background-color: #050510;
     color: var(--text-primary);
     height: 100vh;
+    height: 100dvh; /* iOS Safariのキーボード対応 */
     overflow: hidden;
     position: relative;
 }
@@ -59,7 +60,7 @@ body {
     display: flex;
     width: 100%;
     max-width: 1000px;
-    height: 95vh;
+    height: 100%; /* bodyの100dvhに追従する */
     margin: 0 auto;
     padding: 16px;
     gap: 16px;
@@ -276,7 +277,7 @@ textarea {
     background: transparent;
     border: none;
     color: var(--text-primary);
-    font-size: 1rem;
+    font-size: 16px; /* iOS Safariの自動ズーム防止 */
     resize: none;
     outline: none;
     max-height: 120px;
@@ -357,6 +358,7 @@ textarea::placeholder {
     border-radius: 8px;
     color: white;
     outline: none;
+    font-size: 16px;
 }
 
 .primary-btn {
