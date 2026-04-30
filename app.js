@@ -24,6 +24,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const affirmationText = document.getElementById('affirmation-text');
     const closeAffirmationBtn = document.getElementById('close-affirmation-btn');
 
+    // Voice interaction elements
+    const micBtn = document.getElementById('mic-btn');
+    const voiceToggleBtn = document.getElementById('voice-toggle-btn');
+    
+    let isListening = false;
+    let isVoiceOutputEnabled = true;
+
     const affirmations = [
         "すべては完璧なプロセスの中にあります。今の感情をただ感じてみましょう。",
         "あなたはソースエネルギーと常につながっています。リラックスして、その流れを信じてください。",
@@ -86,6 +93,95 @@ document.addEventListener('DOMContentLoaded', () => {
         closeAffirmationBtn.onclick = () => {
             affirmationModal.style.display = "none";
         };
+    }
+
+    // Voice Toggle Logic
+    if (voiceToggleBtn) {
+        voiceToggleBtn.onclick = () => {
+            isVoiceOutputEnabled = !isVoiceOutputEnabled;
+            if (isVoiceOutputEnabled) {
+                voiceToggleBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+                voiceToggleBtn.title = "音声読み上げオフにする";
+            } else {
+                voiceToggleBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+                voiceToggleBtn.title = "音声読み上げオンにする";
+                if (window.speechSynthesis) window.speechSynthesis.cancel();
+            }
+        };
+    }
+
+    // Speech Recognition Setup
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition;
+    if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.lang = 'ja-JP';
+        recognition.interimResults = true;
+        
+        recognition.onstart = () => {
+            isListening = true;
+            if (micBtn) micBtn.classList.add('listening');
+            userInput.placeholder = "音声を聞き取っています...";
+        };
+        
+        recognition.onresult = (event) => {
+            let finalTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript;
+                }
+            }
+            if (finalTranscript !== '') {
+                userInput.value = userInput.value + finalTranscript;
+                userInput.style.height = 'auto';
+                userInput.style.height = (userInput.scrollHeight) + 'px';
+            }
+        };
+        
+        recognition.onerror = (event) => {
+            console.error("Speech recognition error:", event.error);
+            stopListening();
+        };
+        
+        recognition.onend = () => {
+            stopListening();
+        };
+    }
+
+    function stopListening() {
+        isListening = false;
+        if (micBtn) micBtn.classList.remove('listening');
+        userInput.placeholder = "メッセージを入力してください...";
+    }
+
+    if (micBtn) {
+        micBtn.onclick = () => {
+            if (!recognition) {
+                alert("お使いのブラウザは音声入力に対応していません。ChromeやSafariなどの最新版をお使いください。");
+                return;
+            }
+            if (isListening) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        };
+    }
+
+    // Speech Synthesis
+    function speakText(text) {
+        if (!isVoiceOutputEnabled || !window.speechSynthesis) return;
+        
+        window.speechSynthesis.cancel(); // Stop current speech
+        
+        let cleanText = text.replace(/[#*`~_]/g, '');
+        
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.lang = 'ja-JP';
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        
+        window.speechSynthesis.speak(utterance);
     }
 
     // Sidebar toggles
@@ -361,6 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const htmlResponse = marked.parse(aiResponse);
             appendMessage('ai', '', htmlResponse);
+            speakText(aiResponse);
             
             messages.push({ role: 'model', parts: [{ text: aiResponse }] });
             updateCurrentSession(messages);
@@ -399,7 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const data = await response.json();
-        if (data.candidates && data.candidates[0].content.parts.length > 0) {
+        if (data.candidates && data.candidates.length > 0) {
             return data.candidates[0].content.parts[0].text;
         }
         
