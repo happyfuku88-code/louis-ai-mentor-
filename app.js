@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     appendMessage('user', text);
                 } else {
                     const htmlResponse = marked.parse(text);
-                    appendMessage('ai', '', htmlResponse);
+                    appendMessage('ai', text, htmlResponse);
                 }
             });
         }
@@ -407,13 +407,32 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderDefaultGreeting() {
         const msgDiv = document.createElement('div');
         msgDiv.className = 'message ai-message';
+        
+        const rawText = "こんにちは。私は「LOUIS AI」です。あなたの感情のナビゲーションシステムに寄り添い、ソースと調和するためのサポートをします。今、どんなお気持ちですか？何でも自由にお話しください。";
+        const htmlText = `<p>こんにちは。私は「LOUIS AI」です。</p><p>あなたの感情のナビゲーションシステムに寄り添い、ソースと調和するためのサポートをします。今、どんなお気持ちですか？何でも自由にお話しください。</p>`;
+
         msgDiv.innerHTML = `
             <div class="avatar"><i class="fa-solid fa-compass"></i></div>
-            <div class="message-content">
-                <p>こんにちは。私は「LOUIS AI」です。</p>
-                <p>あなたの感情のナビゲーションシステムに寄り添い、ソースと調和するためのサポートをします。今、どんなお気持ちですか？何でも自由にお話しください。</p>
+            <div class="message-body">
+                <div class="message-content">
+                    ${htmlText}
+                </div>
+                <div class="message-actions">
+                    <button class="play-msg-btn" title="読み上げる"><i class="fa-solid fa-volume-low"></i></button>
+                </div>
             </div>
         `;
+        
+        const playBtn = msgDiv.querySelector('.play-msg-btn');
+        playBtn.onclick = () => {
+            if (window.speechSynthesis) {
+                const wakeUp = new SpeechSynthesisUtterance('');
+                wakeUp.volume = 0;
+                window.speechSynthesis.speak(wakeUp);
+            }
+            speakText(rawText);
+        };
+
         chatContainer.appendChild(msgDiv);
     }
 
@@ -477,7 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
             removeLoading(loadingId);
             
             const htmlResponse = marked.parse(aiResponse);
-            appendMessage('ai', '', htmlResponse);
+            appendMessage('ai', aiResponse, htmlResponse);
             speakText(aiResponse);
             
             messages.push({ role: 'model', parts: [{ text: aiResponse }] });
@@ -532,6 +551,9 @@ document.addEventListener('DOMContentLoaded', () => {
         avatarDiv.className = 'avatar';
         avatarDiv.innerHTML = sender === 'ai' ? '<i class="fa-solid fa-compass"></i>' : '<i class="fa-solid fa-user"></i>';
         
+        const messageBody = document.createElement('div');
+        messageBody.className = 'message-body';
+
         const contentDiv = document.createElement('div');
         contentDiv.className = 'message-content';
         
@@ -541,8 +563,32 @@ document.addEventListener('DOMContentLoaded', () => {
             contentDiv.textContent = text;
         }
         
+        messageBody.appendChild(contentDiv);
+
+        if (sender === 'ai') {
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'message-actions';
+            
+            const playBtn = document.createElement('button');
+            playBtn.className = 'play-msg-btn';
+            playBtn.innerHTML = '<i class="fa-solid fa-volume-low"></i>';
+            playBtn.title = "読み上げる";
+            
+            playBtn.onclick = () => {
+                if (window.speechSynthesis) {
+                    const wakeUp = new SpeechSynthesisUtterance('');
+                    wakeUp.volume = 0;
+                    window.speechSynthesis.speak(wakeUp);
+                }
+                speakText(text);
+            };
+            
+            actionsDiv.appendChild(playBtn);
+            messageBody.appendChild(actionsDiv);
+        }
+
         msgDiv.appendChild(avatarDiv);
-        msgDiv.appendChild(contentDiv);
+        msgDiv.appendChild(messageBody);
         
         chatContainer.appendChild(msgDiv);
         chatContainer.scrollTop = chatContainer.scrollHeight;

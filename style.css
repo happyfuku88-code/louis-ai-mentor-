@@ -287,6 +287,35 @@ header {
     margin-bottom: 0;
 }
 
+.message-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.message-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 4px;
+}
+
+.play-msg-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px;
+    font-size: 0.9rem;
+    opacity: 0.6;
+    transition: all 0.2s;
+}
+
+.play-msg-btn:hover {
+    color: var(--primary);
+    opacity: 1;
+    transform: scale(1.1);
+}
+
 footer {
     padding: 16px;
 }
