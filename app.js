@@ -30,6 +30,16 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let isListening = false;
     let isVoiceOutputEnabled = true;
+    let jpVoice = null;
+
+    if (window.speechSynthesis) {
+        const loadVoices = () => {
+            const voices = window.speechSynthesis.getVoices();
+            jpVoice = voices.find(voice => voice.lang.includes('ja')) || null;
+        };
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+        loadVoices();
+    }
 
     const affirmations = [
         "すべては完璧なプロセスの中にあります。今の感情をただ感じてみましょう。",
@@ -178,8 +188,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const utterance = new SpeechSynthesisUtterance(cleanText);
         utterance.lang = 'ja-JP';
+        if (jpVoice) {
+            utterance.voice = jpVoice;
+        }
         utterance.rate = 1.0;
         utterance.pitch = 1.0;
+        utterance.volume = 1.0;
         
         window.speechSynthesis.speak(utterance);
     }
@@ -424,6 +438,13 @@ document.addEventListener('DOMContentLoaded', () => {
     async function sendMessage() {
         const text = userInput.value.trim();
         if (!text) return;
+
+        // Wake up speech synthesis on user interaction (fixes iOS/Safari blocking)
+        if (isVoiceOutputEnabled && window.speechSynthesis) {
+            const wakeUp = new SpeechSynthesisUtterance('');
+            wakeUp.volume = 0;
+            window.speechSynthesis.speak(wakeUp);
+        }
 
         if (!apiKey) {
             settingsModal.style.display = "flex";
